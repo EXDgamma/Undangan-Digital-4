@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Undangan Fiqa & Fajri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+/*
+VOICE  : khidmat, hangat, rapi — undangan walimah bernuansa paspor perjalanan.
+IDEA   : sebuah paspor bersampul burgundy; dibuka, isinya halaman data, cap, dan boarding pass.
+PICTURE: lambang lengkung mihrab berbingkai ranting zaitun + nama mempelai berkhat Diwani.
+COLOUR : burgundy (dominan), olive (pendukung), emas champagne (aksen), kertas krem.
+TYPE   : Diwani (nama Arab), Amiri (ayat), Cormorant (judul), Courier Prime (teks ketik paspor).
+*/
+
+/* ===== KHAT DIWANI =====
+   Google Fonts tidak punya font Diwani. Taruh file font Diwani di folder /fonts
+   (mis. fonts/diwani.woff2 atau fonts/diwani.ttf) saat diunggah ke GitHub Pages.
+   Jika tidak ada, browser memakai "Diwani Letter" bila terpasang di perangkat,
+   lalu jatuh ke Aref Ruqaa (khat Riq'ah) sebagai cadangan. */
+@font-face{
+  font-family:"Khat Diwani";
+  src:local("Diwani Letter"),local("DiwaniLetter"),local("Diwani Bent"),
+      url("fonts/diwani.woff2") format("woff2"),
+      url("fonts/diwani.ttf") format("truetype");
+  font-display:swap;
+}
+
+:root{
+  color-scheme:light;
+  --burgundy:#6E1E2C;
+  --burgundy-dk:#4A111C;
+  --burgundy-soft:#8C3A47;
+  --olive:#6B7536;
+  --olive-dk:#4B5323;
+  --olive-soft:#A9B07A;
+  --gold:#D4B26A;
+  --gold-soft:#EAD9AE;
+  --paper:#FBF6EC;
+  --paper-2:#F3EAD8;
+  --ink:#3A1219;
+  --muted:#7A5A5F;
+}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth}
+body{
+  margin:0;color:var(--ink);overflow-x:clip;
+  font:15.5px/1.7 "Courier Prime",ui-monospace,monospace;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255,255,255,.06), transparent 40%),
+    repeating-linear-gradient(45deg, var(--olive-dk) 0 2px, transparent 2px 14px),
+    var(--olive);
+}
+body.locked{overflow:hidden;height:100vh}
+.ar-name{font-family:"Khat Diwani","Aref Ruqaa",serif;direction:rtl;font-weight:400}
+.ar{font-family:"Amiri",serif;direction:rtl}
+.title{font-family:"Cormorant Garamond",serif;font-weight:600;letter-spacing:.04em;line-height:1.05;text-wrap:balance}
+.script{font-family:"Pinyon Script",cursive}
+
+/* ===== bingkai halaman ===== */
+.book{max-width:460px;margin:0 auto;background:var(--paper);min-height:100vh;
+  box-shadow:0 0 0 1px rgba(0,0,0,.08),0 30px 80px rgba(0,0,0,.35);position:relative}
+section{position:relative;padding:56px 26px;text-align:center;overflow:hidden}
+.airmail{height:16px;background:repeating-linear-gradient(-45deg,
+  var(--burgundy) 0 14px,var(--paper) 14px 22px,var(--olive) 22px 36px,var(--paper) 36px 44px)}
+.band-line{height:10px;background:var(--burgundy-dk)}
+.divider{display:flex;align-items:center;gap:10px;justify-content:center;margin:12px auto 26px;max-width:260px;color:var(--burgundy)}
+.divider::before,.divider::after{content:"";flex:1;border-top:1.5px dashed currentColor;opacity:.6}
+.divider svg{width:22px;height:22px;flex:none}
+h2.title{font-size:clamp(32px,9vw,42px);color:var(--burgundy);margin:0}
+.bg-route{position:absolute;inset:0;pointer-events:none;opacity:.18}
+
+/* ===== reveal animation ===== */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .9s ease,transform .9s ease}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.cover{transition:none!important}}
+
+/* ===== SAMPUL PASPOR ===== */
+.cover{position:fixed;inset:0;z-index:50;display:flex;justify-content:center;perspective:1600px}
+.cover-inner{width:100%;max-width:460px;height:100%;color:var(--gold);text-align:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;
+  background:
+    radial-gradient(ellipse at 50% 35%, rgba(255,255,255,.08), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(0,0,0,.05) 0 1px, transparent 1px 3px),
+    var(--burgundy);
+  box-shadow:inset 14px 0 30px rgba(0,0,0,.35);
+  transform-origin:left center;transition:transform 1.3s cubic-bezier(.6,.05,.3,1),opacity 1.3s}
+.cover.open .cover-inner{transform:rotateY(-110deg);opacity:0}
+.cover.gone{display:none}
+.cover h1{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:clamp(46px,14vw,62px);letter-spacing:.08em;margin:0;line-height:1}
+.cover .sub{font-family:"Cormorant Garamond",serif;font-size:19px;letter-spacing:.14em;margin:6px 0 18px}
+.crest{width:min(64vw,250px);height:auto;filter:drop-shadow(0 2px 0 rgba(0,0,0,.25))}
+.cover .ar-name{font-size:clamp(44px,13vw,58px);color:var(--gold-soft);margin:8px 0 2px;line-height:1.5}
+.cover .latin{font-size:14px;letter-spacing:.3em;color:var(--olive-soft);text-transform:uppercase}
+.guest{margin-top:24px;color:var(--paper)}
+.guest small{display:block;font-size:13px;opacity:.85}
+.guest b{display:block;font-size:19px;margin-top:6px;color:var(--gold-soft)}
+.btn{display:inline-flex;align-items:center;gap:10px;min-height:46px;padding:0 24px;border:0;border-radius:999px;
+  font:700 15px "Courier Prime",monospace;cursor:pointer;text-decoration:none;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btn-gold{background:var(--gold);color:var(--burgundy-dk);box-shadow:0 6px 18px rgba(0,0,0,.3);margin-top:22px}
+.btn-dark{background:var(--burgundy);color:var(--paper);box-shadow:0 6px 16px rgba(110,30,44,.3)}
+.btn-olive{background:var(--olive);color:var(--paper)}
+.btn svg{width:18px;height:18px}
+
+/* ===== HERO ===== */
+.hero{padding:40px 22px 46px}
+.hero .lead{font-style:italic;letter-spacing:.06em}
+.hero-art{width:100%;max-width:360px;margin:6px auto 0;display:block}
+.hero .ar-name{font-size:clamp(50px,15vw,68px);color:var(--burgundy);line-height:1.45;margin:0}
+.hero .script{font-size:clamp(34px,10vw,44px);color:var(--olive);margin:-4px 0 2px}
+.hero .date{font-weight:700;letter-spacing:.06em}
+
+/* ===== AYAT ===== */
+.ayat{background:var(--paper-2)}
+.ayat .ar{font-size:24px;line-height:2.1;color:var(--burgundy-dk);margin:0 0 14px}
+.ayat p{font-style:italic;margin:0 auto;max-width:360px}
+.ayat cite{display:block;margin-top:14px;font-style:normal;font-weight:700;color:var(--olive-dk)}
+
+/* ===== LOVE PASSPORT BAR ===== */
+.pbar{background:var(--burgundy);color:var(--paper);padding:20px 16px}
+.pbar h3{margin:0 0 14px;font-size:22px;letter-spacing:.12em;font-weight:700}
+.pbar .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;font-size:13px}
+.pbar small{display:block;font-size:11px;opacity:.75;color:var(--gold-soft)}
+.mrz{margin-top:14px;font-size:10.5px;letter-spacing:.12em;color:var(--olive-soft);word-break:break-all;line-height:1.5;text-align:left}
+
+/* ===== SALAM ===== */
+.bism{font-size:30px;color:var(--burgundy);margin:0 0 10px}
+
+/* ===== MEMPELAI ===== */
+.person{display:grid;grid-template-columns:132px minmax(0,1fr);gap:18px;align-items:center;text-align:left;margin:0 auto 10px}
+.person.r{grid-template-columns:minmax(0,1fr) 132px;text-align:right}
+.person.r .photo{order:2}
+.photo{aspect-ratio:3/4;border:2.5px dashed var(--burgundy);padding:6px;background:var(--paper)}
+.photo>div{width:100%;height:100%;background:linear-gradient(160deg,var(--olive-soft),var(--olive));display:grid;place-items:center;position:relative;overflow:hidden}
+.photo svg{width:70%;opacity:.9}
+.photo .stamp{position:absolute;right:-8px;bottom:6px;transform:rotate(-14deg);width:70px;opacity:.85}
+.person .role{font-size:12.5px;color:var(--muted)}
+.person .ar-name{font-size:clamp(26px,8vw,34px);white-space:nowrap;color:var(--burgundy);line-height:1.5;margin:2px 0 -4px;display:block}
+.person .nm{font-weight:700;font-size:18px;color:var(--olive-dk);line-height:1.3}
+.person .par{font-size:13px;margin-top:6px;line-height:1.5}
+.plane-sep{margin:26px auto}
+
+/* ===== COUNTDOWN ===== */
+.count{background:var(--olive);color:var(--paper);padding:34px 20px}
+.count h3{font-family:"Cormorant Garamond",serif;font-size:28px;margin:0 0 4px;font-weight:600}
+.cd{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0 6px}
+.cd div{background:var(--paper);color:var(--burgundy);border-radius:10px;padding:10px 4px;box-shadow:inset 0 -4px 0 var(--gold)}
+.cd b{display:block;font-size:clamp(24px,8vw,32px);line-height:1.1}
+.cd small{font-size:12px;color:var(--olive-dk)}
+
+/* ===== BOARDING PASS (ACARA) ===== */
+.events{background:var(--paper)}
+.ticket{position:relative;background:#fff;border-radius:16px;text-align:left;margin:0 auto 26px;
+  box-shadow:0 10px 26px rgba(74,17,28,.14);overflow:hidden}
+.ticket .top{background:var(--burgundy);color:var(--paper);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ticket .top b{font-family:"Cormorant Garamond",serif;font-size:clamp(21px,6.4vw,26px);white-space:nowrap;line-height:1.2;font-weight:600;letter-spacing:.03em}
+.ticket .top span{font-size:11px;letter-spacing:.14em;color:var(--gold-soft);white-space:nowrap}
+.ticket.olive .top{background:var(--olive)}
+.ticket .body{padding:16px 18px 10px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 14px}
+.ticket .body .full{grid-column:1/-1}
+.ticket small{display:block;font-size:11.5px;color:var(--muted);letter-spacing:.06em}
+.ticket .v{font-weight:700;font-size:15px;line-height:1.4}
+.ticket .tear{position:relative;border-top:2px dashed #E3D4C2;margin:6px 0 0}
+.ticket .tear::before,.ticket .tear::after{content:"";position:absolute;top:-12px;width:22px;height:22px;border-radius:50%;background:var(--paper)}
+.ticket .tear::before{left:-11px}.ticket .tear::after{right:-11px}
+.ticket .foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px}
+.barcode{height:40px;flex:1;max-width:170px}
+.ticket .btn{min-height:44px;padding:0 16px;font-size:13.5px}
+
+/* ===== JOURNEY ===== */
+.journey{background:var(--burgundy);color:var(--paper);padding:46px 0 40px}
+.journey h2{color:var(--gold);font-size:26px;letter-spacing:.1em;font-family:"Courier Prime",monospace;font-weight:700}
+.stamps{position:absolute;inset:0;opacity:.13;pointer-events:none}
+.slider{position:relative;margin-top:20px}
+.track{display:flex;transition:transform .6s ease}
+.slide{flex:0 0 100%;padding:0 48px;text-align:left}
+.slide h4{font-size:22px;margin:0;color:var(--gold-soft)}
+.slide .d{font-size:14px;margin:2px 0 12px;color:var(--olive-soft);border-bottom:1px solid rgba(255,255,255,.4);padding-bottom:12px}
+.slide p{margin:0;font-size:14.5px}
+.nav{position:absolute;top:40%;width:44px;height:44px;border:0;background:transparent;color:var(--paper);font-size:26px;cursor:pointer}
+.nav.p{left:0}.nav.n{right:0}
+.dots{display:flex;gap:8px;justify-content:center;margin-top:22px}
+.dots button{width:10px;height:10px;border-radius:50%;border:0;background:rgba(255,255,255,.4);padding:0;cursor:pointer}
+.dots button.on{background:var(--gold)}
+
+/* ===== FORM ===== */
+form{text-align:left;display:grid;gap:12px}
+label.l{font-size:13px;color:var(--muted)}
+input[type=text],input[type=number],textarea{width:100%;font:16px "Courier Prime",monospace;padding:12px 14px;border:1.5px solid #E2D2BF;border-radius:10px;background:#fff;color:var(--ink)}
+textarea{min-height:100px;resize:vertical}
+.radio{display:flex;align-items:center;gap:10px;min-height:36px;cursor:pointer}
+.radio input{width:18px;height:18px;accent-color:var(--burgundy)}
+.note{font-size:13px;color:var(--olive-dk);min-height:1em}
+.box{border:2px dashed var(--burgundy);border-radius:14px;padding:22px 18px;background:#fff}
+
+/* ===== ADAB ===== */
+.adab{background:var(--paper-2)}
+.adab .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 14px}
+.adab .ic{width:84px;height:84px;margin:0 auto 10px;border-radius:50%;background:#E9D8D3;display:grid;place-items:center}
+.adab .ic svg{width:46px;height:46px;stroke:var(--burgundy);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.adab p{margin:0;font-size:13.5px;line-height:1.45}
+
+/* ===== HADIAH ===== */
+.gift .card{background:linear-gradient(135deg,var(--olive),var(--olive-dk));color:var(--paper);border-radius:16px;padding:20px;text-align:left;margin:0 auto 14px;position:relative;overflow:hidden}
+.gift .card::after{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;border:16px solid rgba(255,255,255,.08)}
+.gift .chip{width:40px;height:30px;border-radius:6px;background:linear-gradient(135deg,var(--gold-soft),var(--gold));margin-bottom:14px}
+.gift .no{font-size:20px;letter-spacing:.12em;font-weight:700}
+.gift .card .btn{margin-top:12px;min-height:40px;padding:0 16px;font-size:13px;background:var(--paper);color:var(--olive-dk)}
+.gift .addr{background:#fff;border-radius:14px;padding:16px;font-size:14px;border:1.5px solid #E9DCCB}
+
+/* ===== DOA ===== */
+.doa .ar{font-size:26px;line-height:2;color:var(--burgundy)}
+
+/* ===== UCAPAN ===== */
+.wishes{margin-top:18px;display:grid;gap:10px;text-align:left;max-height:340px;overflow:auto}
+.wish{background:var(--paper-2);border-left:4px solid var(--olive);border-radius:8px;padding:10px 14px;font-size:14px}
+.wish b{color:var(--burgundy)}
+.empty{font-size:13.5px;color:var(--muted);text-align:center}
+
+/* ===== FOOTER ===== */
+footer{background:var(--burgundy-dk);color:var(--gold-soft);text-align:center;padding:34px 20px 90px}
+footer .ar-name{font-size:42px;line-height:1.5;margin:0}
+footer p{margin:6px 0 0;font-size:13px;color:var(--paper);opacity:.85}
+
+/* ===== MUSIK ===== */
+.music{position:fixed;right:max(16px,calc(50% - 214px));bottom:18px;z-index:40;width:48px;height:48px;border-radius:50%;
+  border:2px solid var(--gold);background:var(--burgundy);color:var(--gold);display:none;place-items:center;cursor:pointer}
+.music.show{display:grid}
+.music svg{width:22px;height:22px}
+.music.play svg{animation:spin 4s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body class="locked">
+
+<!-- SVG SYMBOLS -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="plane" viewBox="0 0 24 24"><path fill="currentColor" d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" transform="rotate(90 12 12)"/></symbol>
+    <symbol id="leaf" viewBox="0 0 20 40"><path d="M10 0C17 10 17 28 10 40 3 28 3 10 10 0Z"/><path d="M10 3V38" stroke="rgba(0,0,0,.25)" stroke-width="1" fill="none"/></symbol>
+    <symbol id="pin" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></symbol>
+  </defs>
+</svg>
+
+<!-- ================= SAMPUL ================= -->
+<div class="cover" id="cover">
+  <div class="cover-inner">
+    <h1>PASSPORT</h1>
+    <div class="sub">WEDDING INVITATION</div>
+
+    <svg class="crest" viewBox="0 0 240 260" aria-label="Lambang inisial R dan F">
+      <g id="wreath" fill="var(--olive-soft)"></g>
+      <!-- lengkung mihrab -->
+      <path d="M70 200V108a50 50 0 0 1 100 0v92Z" fill="none" stroke="currentColor" stroke-width="2.5"/>
+      <path d="M78 194V110a42 42 0 0 1 84 0v84Z" fill="none" stroke="currentColor" stroke-width="1"/>
+      <!-- bulan sabit & bintang -->
+      <path d="M120 28a13 13 0 1 0 9 22 11 11 0 1 1-9-22Z" fill="currentColor"/>
+      <path d="M134 32l2 5 5 .5-4 3 1.3 5-4.3-2.8-4.3 2.8 1.3-5-4-3 5-.5z" fill="currentColor"/>
+      <text x="120" y="132" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="46" fill="currentColor">R</text>
+      <text x="120" y="152" text-anchor="middle" font-family="Pinyon Script,cursive" font-size="24" fill="var(--olive-soft)">&amp;</text>
+      <text x="120" y="186" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="46" fill="currentColor">F</text>
+      <!-- pita tanggal -->
+      <path d="M44 206h152l-10 12 10 12H44l10-12z" fill="var(--burgundy-dk)" stroke="currentColor" stroke-width="1.5"/>
+      <text x="120" y="223" text-anchor="middle" font-family="Courier Prime,monospace" font-size="11" letter-spacing="3" fill="currentColor">25 · 12 · 2026</text>
+    </svg>
+
+    <div class="ar-name" lang="ar">رَفِيقَة وَ فَجْرِي</div>
+    <div class="latin">Fiqa &amp; Fajri</div>
+
+    <div class="guest">
+      <small>Kepada Yth. Bapak/Ibu/Saudara/i</small>
+      <b id="guestName">Tamu Undangan</b>
+    </div>
+    <button class="btn btn-gold" id="openBtn" type="button">
+      <svg><use href="#plane"/></svg> Buka Undangan
+    </button>
+  </div>
+</div>
+
+<main class="book">
+
+  <!-- ================= HERO ================= -->
+  <div class="airmail"></div><div class="band-line" style="height:6px;background:var(--olive)"></div>
+  <section class="hero">
+    <div class="lead rv">The Wedding of</div>
+    <svg class="hero-art rv" viewBox="0 0 360 170" aria-hidden="true">
+      <path d="M30 140 C 60 40, 150 40, 180 95 C 210 40, 300 40, 330 140" fill="none" stroke="var(--olive-soft)" stroke-width="2" stroke-dasharray="6 7"/>
+      <path d="M180 158 C 150 136, 146 112, 162 104 C 172 99, 178 106, 180 112 C 182 106, 188 99, 198 104 C 214 112, 210 136, 180 158Z" fill="var(--burgundy)"/>
+      <use href="#pin" x="14" y="118" width="32" height="32" style="color:var(--olive)"/>
+      <use href="#plane" x="318" y="118" width="30" height="30" style="color:var(--burgundy)" transform="rotate(40 333 133)"/>
+      <text x="30" y="166" font-family="Courier Prime" font-size="11" fill="var(--muted)" text-anchor="middle">JMB</text>
+      <text x="330" y="166" font-family="Courier Prime" font-size="11" fill="var(--muted)" text-anchor="middle">JANNAH</text>
+    </svg>
+    <p class="ar-name rv" lang="ar">رَفِيقَة وَ فَجْرِي</p>
+    <div class="script rv">Fiqa &amp; Fajri</div>
+    <div class="date rv">Jumat, 25 Desember 2026</div>
+  </section>
+  <div class="band-line" style="height:6px;background:var(--olive)"></div><div class="airmail"></div>
+
+  <!-- ================= AYAT ================= -->
+  <section class="ayat">
+    <p class="ar rv" lang="ar">وَمِنْ اٰيٰتِهٖٓ اَنْ خَلَقَ لَكُمْ مِّنْ اَنْفُسِكُمْ اَزْوَاجًا لِّتَسْكُنُوْٓا اِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَّوَدَّةً وَّرَحْمَةً</p>
+    <p class="rv">“Di antara tanda-tanda (kebesaran)-Nya ialah bahwa Dia menciptakan pasangan-pasangan untukmu dari (jenis) dirimu sendiri agar kamu merasa tenteram kepadanya. Dia menjadikan di antaramu rasa cinta dan kasih sayang. Sesungguhnya pada yang demikian itu benar-benar terdapat tanda-tanda (kebesaran Allah) bagi kaum yang berpikir.”</p>
+    <cite class="rv">QS. Ar-Rum : 21</cite>
+  </section>
+
+  <!-- ================= LOVE PASSPORT ================= -->
+  <div class="pbar">
+    <h3>&gt;&gt;&gt; LOVE PASSPORT &lt;&lt;&lt;</h3>
+    <div class="grid">
+      <div><small>Type</small>Walimah</div>
+      <div><small>Couple</small>Fiqa &amp; Fajri</div>
+      <div><small>No. Paspor</small>F25122026</div>
+    </div>
+    <div class="mrz">P&lt;IDNRAFIQA&lt;&lt;NUREZA&lt;&lt;&amp;&lt;&lt;AL&lt;FAJRI&lt;&lt;MUHAMMAD<br>F25122026&lt;IDN&lt;JAMBI&lt;&lt;SAKINAH&lt;MAWADDAH&lt;WARAHMAH</div>
+  </div>
+  <div class="airmail"></div>
+
+  <!-- ================= SALAM & MEMPELAI ================= -->
+  <section>
+    <div class="ar bism rv" lang="ar">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
+    <p class="rv"><b>Assalamu'alaikum warahmatullahi wabarakatuh</b></p>
+    <p class="rv">Dengan memohon rahmat dan ridha Allah Subhanahu wa Ta'ala, kami bermaksud menyelenggarakan pernikahan putra-putri kami:</p>
+
+    <div class="person rv" style="margin-top:34px">
+      <div class="photo"><div>
+        <svg viewBox="0 0 100 120" aria-hidden="true"><path d="M50 12c-16 0-26 13-26 30 0 9 3 15 3 15-9 6-15 18-17 63h80c-2-45-8-57-17-63 0 0 3-6 3-15 0-17-10-30-26-30Z" fill="var(--paper)" opacity=".9"/><ellipse cx="50" cy="44" rx="13" ry="16" fill="var(--olive-soft)"/></svg>
+        <svg class="stamp" viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="34" fill="none" stroke="var(--burgundy)" stroke-width="3"/><circle cx="40" cy="40" r="27" fill="none" stroke="var(--burgundy)" stroke-width="1"/><text x="40" y="37" text-anchor="middle" font-size="11" font-family="Courier Prime" font-weight="700" fill="var(--burgundy)">BRIDE</text><text x="40" y="51" text-anchor="middle" font-size="9" font-family="Courier Prime" fill="var(--burgundy)">25.12.26</text></svg>
+      </div></div>
+      <div>
+        <div class="role">Mempelai Wanita / The Bride</div>
+        <span class="ar-name" lang="ar">نُوْرِيزَا رَفِيقَة</span>
+        <div class="nm">Nureza Rafiqa, S.Ag.</div>
+        <div class="par">Putri dari<br>Bapak … &amp; Ibu …</div>
+      </div>
+    </div>
+
+    <div class="divider plane-sep" aria-hidden="true"><svg><use href="#plane"/></svg></div>
+
+    <div class="person r rv">
+      <div class="photo"><div>
+        <svg viewBox="0 0 100 120" aria-hidden="true"><circle cx="50" cy="40" r="18" fill="var(--paper)" opacity=".9"/><path d="M50 30c-10 0-16 4-17 8 4-9 30-9 34 0-1-4-7-8-17-8Z" fill="var(--olive-dk)"/><path d="M14 120c2-34 14-52 36-52s34 18 36 52Z" fill="var(--paper)" opacity=".9"/><path d="M50 68l-8 18 8 34 8-34z" fill="var(--burgundy)"/></svg>
+        <svg class="stamp" viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="34" fill="none" stroke="var(--burgundy)" stroke-width="3"/><circle cx="40" cy="40" r="27" fill="none" stroke="var(--burgundy)" stroke-width="1"/><text x="40" y="37" text-anchor="middle" font-size="11" font-family="Courier Prime" font-weight="700" fill="var(--burgundy)">GROOM</text><text x="40" y="51" text-anchor="middle" font-size="9" font-family="Courier Prime" fill="var(--burgundy)">25.12.26</text></svg>
+      </div></div>
+      <div>
+        <div class="role">Mempelai Pria / The Groom</div>
+        <span class="ar-name" lang="ar">مُحَمَّد الْفَجْرِي</span>
+        <div class="nm">Muhammad Al Fajri</div>
+        <div class="par">Putra dari<br>Bapak … &amp; Ibu …</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= COUNTDOWN ================= -->
+  <div class="count">
+    <h3>Menuju Hari Bahagia</h3>
+    <div>Akad Nikah · Jumat, 25 Desember 2026</div>
+    <div class="cd" id="cd">
+      <div><b data-k="d">0</b><small>Hari</small></div>
+      <div><b data-k="h">0</b><small>Jam</small></div>
+      <div><b data-k="m">0</b><small>Menit</small></div>
+      <div><b data-k="s">0</b><small>Detik</small></div>
+    </div>
+  </div>
+  <div class="airmail"></div>
+
+  <!-- ================= ACARA (BOARDING PASS) ================= -->
+  <section class="events">
+    <h2 class="title rv">BOARDING PASS</h2>
+    <div class="divider rv" aria-hidden="true"><svg><use href="#plane"/></svg></div>
+    <div id="tickets"></div>
+  </section>
+
+  <!-- ================= OUR JOURNEY ================= -->
+  <div class="airmail"></div>
+  <section class="journey">
+    <svg class="stamps" viewBox="0 0 400 420" aria-hidden="true" id="stampsBg"></svg>
+    <h2>&gt;&gt;&gt; OUR JOURNEY &lt;&lt;&lt;</h2>
+    <div class="slider" id="slider">
+      <div class="track" id="track"></div>
+      <button class="nav p" type="button" aria-label="Sebelumnya">‹</button>
+      <button class="nav n" type="button" aria-label="Berikutnya">›</button>
+      <div class="dots" id="dots"></div>
+    </div>
+  </section>
+  <div class="airmail"></div>
+
+  <!-- ================= KONFIRMASI ================= -->
+  <section>
+    <h2 class="title rv">KONFIRMASI</h2>
+    <div class="divider rv" aria-hidden="true"><svg><use href="#plane"/></svg></div>
+    <form id="rsvp" class="rv">
+      <input type="text" id="rName" placeholder="Ketikkan nama" required aria-label="Nama">
+      <input type="number" id="rCount" min="1" max="10" placeholder="Jumlah tamu" aria-label="Jumlah tamu">
+      <span class="l">Konfirmasi kehadiran</span>
+      <label class="radio"><input type="radio" name="hadir" value="Insya Allah hadir" checked> Iya, saya akan hadir</label>
+      <label class="radio"><input type="radio" name="hadir" value="Mohon maaf berhalangan hadir"> Maaf, saya berhalangan hadir</label>
+      <div><button class="btn btn-dark" type="submit">Konfirmasi via WhatsApp</button></div>
+      <div class="note" id="rNote" role="status"></div>
+    </form>
+  </section>
+
+  <!-- ================= ADAB ================= -->
+  <section class="adab">
+    <h2 class="title rv">ADAB MENGHADIRI WALIMAH</h2>
+    <div class="divider rv" aria-hidden="true"><svg><use href="#plane"/></svg></div>
+    <div class="grid" id="adab"></div>
+  </section>
+
+  <!-- ================= HADIAH ================= -->
+  <section class="gift">
+    <h2 class="title rv">KIRIM HADIAH</h2>
+    <div class="divider rv" aria-hidden="true"><svg><use href="#plane"/></svg></div>
+    <p class="rv" style="margin-top:0">Doa restu Anda adalah hadiah terindah bagi kami. Namun jika ingin memberi tanda kasih, Anda dapat mengirimkannya melalui:</p>
+    <div class="card rv">
+      <div class="chip"></div>
+      <div style="font-size:13px;opacity:.85">Bank Syariah Indonesia</div>
+      <div class="no" id="acc">0000 0000 00</div>
+      <div style="font-size:14px">a.n. Muhammad Al Fajri</div>
+      <button class="btn" type="button" data-copy="acc">Salin nomor rekening</button>
+    </div>
+    <div class="addr rv">
+      <b>Kirim kado</b><br>
+      <span id="addr">Jl. Abdul Gaffar RT 01, Desa Sarang Burung, Jambi</span><br>
+      <button class="btn btn-olive" type="button" data-copy="addr" style="margin-top:10px;min-height:40px;font-size:13px">Salin alamat</button>
+    </div>
+    <div class="note" id="copyNote" role="status" style="margin-top:8px"></div>
+  </section>
+
+  <!-- ================= DOA ================= -->
+  <section class="doa" style="background:var(--paper-2)">
+    <h2 class="title rv">DOA UNTUK PENGANTIN</h2>
+    <div class="divider rv" aria-hidden="true"><svg><use href="#plane"/></svg></div>
+    <p class="ar rv" lang="ar">بَارَكَ اللّٰهُ لَكُمَا وَبَارَكَ عَلَيْكُمَا وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ</p>
+    <p class="rv" style="font-style:italic">“Semoga Allah memberkahi kalian berdua, melimpahkan keberkahan atas kalian, dan mengumpulkan kalian berdua dalam kebaikan.”</p>
+    <p class="rv"><b style="color:var(--olive-dk)">HR. Abu Dawud no. 2130</b></p>
+  </section>
+
+  <!-- ================= UCAPAN ================= -->
+  <section>
+    <h2 class="title rv">UCAPAN</h2>
+    <div class="divider rv" aria-hidden="true"><svg><use href="#plane"/></svg></div>
+    <div class="box rv">
+      <form id="wishForm">
+        <input type="text" id="wName" placeholder="Nama" required aria-label="Nama">
+        <textarea id="wText" placeholder="Tulis ucapan &amp; doa" required aria-label="Ucapan dan doa"></textarea>
+        <div><button class="btn btn-dark" type="submit">Kirim</button></div>
+      </form>
+      <div class="wishes" id="wishes"></div>
+    </div>
+  </section>
+
+  <footer>
+    <p style="font-size:14px;opacity:1;margin-bottom:10px">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.</p>
+    <p style="opacity:1;color:var(--gold-soft)"><b>Wassalamu'alaikum warahmatullahi wabarakatuh</b></p>
+    <div class="ar-name" lang="ar" style="margin-top:16px">رَفِيقَة وَ فَجْرِي</div>
+    <p>Kami yang berbahagia, keluarga kedua mempelai</p>
+  </footer>
+</main>
+
+<button class="music" id="music" type="button" aria-label="Putar/hentikan musik">
+  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" stroke-width="2" fill="none" opacity=".5"/></svg>
+</button>
+<audio id="bgm" src="musik.mp3" loop preload="none"></audio>
+
+<script>
+{
+/* ================== PENGATURAN — ubah di sini ================== */
+const CONFIG = {
+  akad: "2026-12-25T08:00:00+07:00",
+  whatsapp: "62xxxxxxxxxx",            // nomor WA penerima RSVP, format 62…
+  events: [
+    { name:"Akad Nikah", code:"AKD", tone:"", date:"Jumat, 25 Desember 2026", time:"08.00 WIB – selesai",
+      place:"Kediaman keluarga mempelai wanita", addr:"Jl. Abdul Gaffar RT 07, Desa Sarang Burung, Jambi",
+      map:"https://www.google.com/maps/search/?api=1&query=Desa+Sarang+Burung+Jambi" },
+    { name:"Resepsi", code:"RSP", tone:"", date:"Minggu, 3 Januari 2027", time:"10.00 WIB – selesai",
+      place:"Kediaman keluarga mempelai wanita", addr:"Jl. Abdul Gaffar RT 07, Desa Sarang Burung, Jambi",
+      map:"https://www.google.com/maps/search/?api=1&query=Desa+Sarang+Burung+Jambi" },
+    { name:"Ngunduh Mantu", code:"NGM", tone:"olive", date:"Minggu, 10 Januari 2027", time:"10.00 WIB – selesai",
+      place:"Kediaman keluarga mempelai pria", addr:"Jl. Abdul Gaffar RT 01, Desa Sarang Burung, Jambi",
+      map:"https://www.google.com/maps/search/?api=1&query=Desa+Sarang+Burung+Jambi" }
+  ],
+  journey: [
+    { t:"Ta'aruf", d:"Awal perkenalan", p:"Allah mempertemukan kami lewat media sosial. Dari obrolan sederhana, tumbuh niat baik untuk saling mengenal dengan cara yang diridhai-Nya." },
+    { t:"Khitbah", d:"15 Agustus 2026", p:"Setelah Fiqa menuntaskan studi S1-nya, keluarga besar kami bertemu dan lamaran pun diterima dengan penuh syukur." },
+    { t:"Walimatul 'Urs", d:"25 Desember 2026", p:"Dengan izin Allah, kami mengikat janji suci dalam akad nikah, memulai perjalanan baru menuju sakinah, mawaddah, warahmah." }
+  ],
+  adab: [
+    ["Tidak menunda shalat", '<path d="M12 3l1.5 3M6 21V11h12v10M4 21h16M9 21v-5a3 3 0 0 1 6 0v5M7 11c0-3 2-5 5-5s5 2 5 5"/>'],
+    ["Tidak ikhtilat", '<circle cx="7" cy="5" r="2"/><circle cx="17" cy="5" r="2"/><path d="M7 8v13M4 12l3-4 3 4M17 8l-3 7h6l-3-7M15 15v6M19 15v6M12 3v18"/>'],
+    ["Perhatikan adab makan & minum", '<path d="M6 3v8a2 2 0 0 0 4 0V3M8 11v10M17 3c-2 2-2 7 0 9v9"/>'],
+    ["Tidak mengambil foto tanpa izin", '<rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.5"/><path d="M8 7l2-3h4l2 3"/>'],
+    ["Berpakaian sopan & menutup aurat", '<path d="M8 3l-5 4 3 4 2-1v11h8V10l2 1 3-4-5-4c-1 2-2.5 3-4 3S9 5 8 3z"/>'],
+    ["Mendoakan pengantin", '<path d="M8 21v-6l-3-4V5l3 4M16 21v-6l3-4V5l-3 4M8 9l4 3 4-3"/>']
+  ]
+};
+/* ============================================================== */
+
+const $ = s => document.querySelector(s);
+
+/* nama tamu dari URL: index.html?to=Bapak+Ahmad */
+try{
+  const to = new URLSearchParams(location.search).get("to");
+  if(to) $("#guestName").textContent = to;
+}catch(e){}
+
+/* karangan daun zaitun pada lambang */
+(() => {
+  const g = $("#wreath"); let h = "";
+  for(let i=0;i<10;i++){
+    const a = 115 + i*14, rad = a*Math.PI/180, r = 92 + (i%2 ? 8 : 0);
+    const lx = 120 + r*Math.cos(rad), ly = 125 + r*Math.sin(rad);
+    const rot = a + 90 + (i%2 ? 25 : -25);
+    h += `<use href="#leaf" width="12" height="24" x="${(lx-6).toFixed(1)}" y="${(ly-12).toFixed(1)}" transform="rotate(${rot} ${lx.toFixed(1)} ${ly.toFixed(1)})"/>`;
+    const rx = 240 - lx;
+    h += `<use href="#leaf" width="12" height="24" x="${(rx-6).toFixed(1)}" y="${(ly-12).toFixed(1)}" transform="rotate(${-rot} ${rx.toFixed(1)} ${ly.toFixed(1)})"/>`;
+  }
+  g.innerHTML = h;
+})();
+
+/* buka sampul */
+const cover = $("#cover"), audio = $("#bgm"), mBtn = $("#music");
+$("#openBtn").addEventListener("click", () => {
+  cover.classList.add("open");
+  document.body.classList.remove("locked");
+  setTimeout(() => cover.classList.add("gone"), 1300);
+  mBtn.classList.add("show");
+  audio.play().then(() => mBtn.classList.add("play")).catch(() => {});
+});
+mBtn.addEventListener("click", () => {
+  if(audio.paused){ audio.play().then(() => mBtn.classList.add("play")).catch(() => {}); }
+  else { audio.pause(); mBtn.classList.remove("play"); }
+});
+
+/* hitung mundur */
+const target = new Date(CONFIG.akad).getTime();
+const tick = () => {
+  let s = Math.max(0, Math.floor((target - Date.now())/1000));
+  const v = { d:Math.floor(s/86400), h:Math.floor(s%86400/3600), m:Math.floor(s%3600/60), s:s%60 };
+  document.querySelectorAll("#cd b").forEach(b => b.textContent = String(v[b.dataset.k]).padStart(2,"0"));
+};
+tick(); setInterval(tick, 1000);
+
+/* barcode sederhana dari teks */
+const barcode = txt => {
+  let x = 0, bars = "", seed = [...txt].reduce((a,c) => a*31 + c.charCodeAt(0), 7);
+  while(x < 168){ seed = (seed*1103515245 + 12345) % 2147483648; const w = 1 + seed % 4; if(seed % 3) bars += `<rect x="${x}" y="0" width="${w}" height="40"/>`; x += w + 1 + (seed>>3)%2; }
+  return `<svg class="barcode" viewBox="0 0 170 40" preserveAspectRatio="none" fill="var(--burgundy-dk)" aria-hidden="true">${bars}</svg>`;
+};
+
+/* tiket acara */
+$("#tickets").innerHTML = CONFIG.events.map((e,i) => `
+  <article class="ticket rv ${e.tone}">
+    <div class="top"><b>${e.name}</b><span>GATE ${String(i+1).padStart(2,"0")} · ${e.code}</span></div>
+    <div class="body">
+      <div><small>Tanggal</small><div class="v">${e.date}</div></div>
+      <div><small>Pukul</small><div class="v">${e.time}</div></div>
+      <div class="full"><small>Lokasi</small><div class="v">${e.place}</div><div style="font-size:14px">${e.addr}</div></div>
+    </div>
+    <div class="tear"></div>
+    <div class="foot">${barcode(e.name)}
+      <a class="btn ${e.tone ? 'btn-olive' : 'btn-dark'}" href="${e.map}" target="_blank" rel="noopener"><svg><use href="#pin"/></svg> Lihat Lokasi</a>
+    </div>
+  </article>`).join("");
+
+/* latar cap paspor di Our Journey */
+$("#stampsBg").innerHTML = [[70,80,"JAMBI"],[300,120,"JAKARTA"],[110,300,"ARRIVAL"],[290,330,"25.12.26"],[200,210,"SAKINAH"]]
+  .map(([x,y,t],i) => `<g transform="rotate(${i%2?14:-12} ${x} ${y})" fill="none" stroke="#fff" stroke-width="2">
+    ${i%2 ? `<rect x="${x-58}" y="${y-28}" width="116" height="56" rx="8"/>` : `<circle cx="${x}" cy="${y}" r="46"/><circle cx="${x}" cy="${y}" r="38"/>`}
+    <text x="${x}" y="${y+5}" text-anchor="middle" fill="#fff" stroke="none" font-family="Courier Prime" font-size="14" font-weight="700">${t}</text></g>`).join("");
+
+/* slider perjalanan */
+const track = $("#track"), dots = $("#dots");
+track.innerHTML = CONFIG.journey.map(j => `<div class="slide"><h4>${j.t}</h4><div class="d">${j.d}</div><p>${j.p}</p></div>`).join("");
+dots.innerHTML = CONFIG.journey.map((_,i) => `<button type="button" aria-label="Kisah ${i+1}"></button>`).join("");
+let cur = 0, timer;
+const go = i => {
+  cur = (i + CONFIG.journey.length) % CONFIG.journey.length;
+  track.style.transform = `translateX(-${cur*100}%)`;
+  [...dots.children].forEach((d,k) => d.classList.toggle("on", k === cur));
+  clearInterval(timer); timer = setInterval(() => go(cur+1), 6000);
+};
+$(".nav.p").addEventListener("click", () => go(cur-1));
+$(".nav.n").addEventListener("click", () => go(cur+1));
+[...dots.children].forEach((d,k) => d.addEventListener("click", () => go(k)));
+let sx = null;
+track.addEventListener("touchstart", e => sx = e.touches[0].clientX, {passive:true});
+track.addEventListener("touchend", e => { if(sx === null) return; const dx = e.changedTouches[0].clientX - sx; if(Math.abs(dx) > 40) go(cur + (dx < 0 ? 1 : -1)); sx = null; });
+go(0);
+
+/* adab */
+$("#adab").innerHTML = CONFIG.adab.map(([t,p]) => `<div class="rv"><div class="ic"><svg viewBox="0 0 24 24">${p}</svg></div><p>${t}</p></div>`).join("");
+
+/* RSVP via WhatsApp */
+$("#rsvp").addEventListener("submit", e => {
+  e.preventDefault();
+  const n = $("#rName").value.trim(), c = $("#rCount").value || "1";
+  const h = document.querySelector('input[name="hadir"]:checked').value;
+  const note = $("#rNote");
+  if(/x/.test(CONFIG.whatsapp)){ note.textContent = "Nomor WhatsApp penerima belum diisi di CONFIG."; return; }
+  const msg = `Assalamu'alaikum, saya ${n} (${c} orang): ${h} di walimah Fiqa & Fajri.`;
+  note.innerHTML = `Terima kasih, ${n}! <a href="https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">Ketuk di sini untuk mengirim via WhatsApp</a>.`;
+});
+
+/* salin rekening / alamat */
+document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", async () => {
+  const t = document.getElementById(b.dataset.copy).textContent.replace(/\s/g, b.dataset.copy === "acc" ? "" : " ");
+  const note = $("#copyNote");
+  try{ await navigator.clipboard.writeText(t); note.textContent = "Tersalin: " + t; }
+  catch(e){ note.textContent = "Salin manual: " + t; }
+}));
+
+/* ucapan (tersimpan di perangkat pengunjung saja) */
+const KEY = "ucapan-fiqa-fajri";
+const load = () => { try{ return JSON.parse(localStorage.getItem(KEY)) || []; }catch(e){ return []; } };
+let wishes = load();
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const renderW = () => {
+  $("#wishes").innerHTML = wishes.length
+    ? wishes.map(w => `<div class="wish"><b>${esc(w.n)}</b><br>${esc(w.t)}</div>`).join("")
+    : `<p class="empty">Belum ada ucapan. Jadilah yang pertama mendoakan kedua mempelai.</p>`;
+};
+renderW();
+$("#wishForm").addEventListener("submit", e => {
+  e.preventDefault();
+  wishes.unshift({ n:$("#wName").value.trim(), t:$("#wText").value.trim() });
+  try{ localStorage.setItem(KEY, JSON.stringify(wishes)); }catch(e){}
+  e.target.reset(); renderW();
+});
+
+/* animasi muncul saat di-scroll */
+const io = new IntersectionObserver(es => es.forEach(en => { if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); } }), { threshold:.15 });
+document.querySelectorAll(".rv").forEach(el => io.observe(el));
+}
+</script>
+</body>
+</html>
